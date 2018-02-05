@@ -1,0 +1,85 @@
+#include<cstdio>
+#include<iostream>
+#include<algorithm>
+#include<vector>
+#include<queue>
+#include<stack>
+#include<string>
+#include<cmath>
+using namespace std;
+#define sz 1001
+void dfsvisit(int n);
+vector<int>graph[sz];
+int d[sz],c[sz],f[sz];
+stack<int>order;
+int tim=0;
+void gflush()
+{
+    for(int i=0; i<sz; i++)
+    {
+        d[i]=-1;
+        f[i]=-1;
+        c[i]=0;
+    }
+    tim=0;
+    while(!order.empty())
+    {
+        order.pop();
+    }
+}
+void dfs(int n)
+{
+    for(int i=1; i<=n; i++)
+        if(c[i]==0)
+            dfsvisit(i);
+}
+void dfsvisit(int n)
+{
+    tim++;
+    d[n]=tim;
+    c[n]=1;
+    for(int i=0; i<graph[n].size(); i++)
+    {
+        if(c[graph[n][i]]==0)
+            dfsvisit(graph[n][i]);
+    }
+    c[n]=2;
+    tim++;
+    f[n]=tim;
+    order.push(n);
+}
+int main()
+{
+
+    //freopen ("input.txt","r",stdin);
+    while(1)
+    {
+        int n,m;
+        cin>>n>>m;
+        if(n==0&m==0)
+            break;
+        gflush();
+        for(int i=0; i<m; i++)
+        {
+            int x,y;
+            cin>>x>>y;
+            graph[x].push_back(y);
+        }
+        dfs(n);
+        bool b=false;
+        while(!order.empty())
+        {
+            if(b)
+                cout<<" "<<order.top();
+            else
+            {
+                b=true;
+                cout<<order.top();
+            }
+            order.pop();
+        }
+        cout<<'\n';
+    }
+
+    return 0;
+}

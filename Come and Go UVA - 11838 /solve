@@ -1,0 +1,125 @@
+#include<cstdio>
+#include<iostream>
+#include<algorithm>
+#include<vector>
+#include<queue>
+#include<stack>
+#include<string>
+#include<cmath>
+#include<map>
+using namespace std;
+#define sz 1000001
+#define loop(n) for(int i=0;i<n;i++)
+#define loop1(n) for(int i=1;i<=n;i++)
+vector<int>graph[sz],rgraph[sz];
+int c[sz],d[sz],f[sz];
+int tim=0;
+stack<int>order;
+vector<int>sccorder;
+void gflush()
+{
+    loop(sz)
+    {
+        c[i]=0;
+        d[i]=-1;
+        f[i]=-1;
+    }
+    tim=0;
+}
+void gnew(){
+    gflush();
+    loop(sz)
+    {
+    graph[i].clear();
+    rgraph[i].clear();
+    }
+    while(!order.empty())
+    order.pop();
+    sccorder.clear();
+}
+void dfsvisit(int n)
+{
+    tim++;
+    d[n]=tim;
+    c[n]=1;
+    loop(graph[n].size())
+    {
+        if(c[graph[n][i]]==0)
+            dfsvisit(graph[n][i]);
+    }
+    tim++;
+    f[n]=tim;
+    c[n]=2;
+    order.push(n);
+}
+void sccvisit(int n)
+{
+    tim++;
+    d[n]=tim;
+    c[n]=1;
+    loop(rgraph[n].size())
+    {
+        if(c[rgraph[n][i]]==0)
+            sccvisit(rgraph[n][i]);
+    }
+    tim++;
+    f[n]=tim;
+    c[n]=2;
+}
+void dfs(int n)
+{
+
+    gflush();
+    loop1(n)
+    {
+        if(c[i]==0)
+            dfsvisit(i);
+    }
+    while(!order.empty())
+    {
+        sccorder.push_back(order.top());
+        order.pop();
+    }
+}
+int main()
+{
+
+   // freopen ("input.txt","r",stdin);
+    while(1)
+    {   gnew();
+        int n,m;
+        cin>>n>>m;
+        if(n==0&&m==0)
+            break;
+        loop(m)
+        {
+            int x,y,p;
+            cin>>x>>y>>p;
+            graph[x].push_back(y);
+            rgraph[y].push_back(x);
+            if(p==2)
+            {
+                rgraph[x].push_back(y);
+                graph[y].push_back(x);
+            }
+        }
+        dfs(n);
+        gflush();
+        loop1(n)
+        sccvisit(sccorder[0]);
+        bool ans=true;
+        loop1(n)
+        {
+            if(c[i]==0)
+
+            {
+                ans=false;
+            }
+        }
+        if(ans)
+            cout<<"1\n";
+        else
+            cout<<"0\n";
+    }
+    return 0;
+}

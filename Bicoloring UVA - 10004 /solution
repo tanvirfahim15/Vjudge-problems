@@ -1,0 +1,175 @@
+#include <bits/stdc++.h>
+using namespace std;
+struct vertex
+{
+    int c=0;
+    int d=-1;
+    int p=-1;
+    int dc=0;
+    int dp=-1;
+    int start=-1;
+    int stop=-1;
+    vector<int> adjacent;
+};
+
+struct graph
+{
+    vertex v[201];
+    vector<int> vset;
+    stack<int> topsort;
+    int adj[201][201];
+
+    int time=0;
+    int hascycle=0;
+    int compdir=0;
+    int edgecnt=0;
+    int vcnt=0;
+    graph()
+    {
+        int i,j;
+        for(i=0; i<201; i++)
+            for(j=0; j<201; j++)
+                adj[i][j]=0;
+    }
+    int isbipartite()
+    {
+        int i;
+        for(i=0; i<100; i++)
+        {
+            v[i].c=0;
+            v[i].p=-1;
+            v[i].d=-1;
+        }
+        int x=1;
+        for(i=0; i<100; i++)
+        {
+
+            if(v[i].c==0)
+                x*=checkbipartite(i);
+        }
+        return x;
+    }
+    int checkbipartite(int source)
+    {
+        v[source].c=1;
+        queue<int> bfs;
+        bfs.push(source);
+        while(!bfs.empty())
+        {
+            int cur=bfs.front();
+            bfs.pop();
+            for(vector<int>::iterator it=v[cur].adjacent.begin(); it!=v[cur].adjacent.end(); ++it)
+            {
+                if(v[*it].c==0)
+                {
+                    v[*it].c=3-v[cur].c;
+                    bfs.push(*it);
+                }
+                else if(v[*it].c==v[cur].c)
+                    return 0;
+            }
+        }
+        return 1;
+    }
+    void dobfs(int source)
+    {
+        int i;
+        for(i=0; i<100; i++)
+        {
+            v[i].c=0;
+            v[i].p=-1;
+            v[i].d=-1;
+        }
+        v[source].c=1;
+        v[source].d=0;
+        queue<int> bfs;
+        bfs.push(source);
+        while(!bfs.empty())
+        {
+            int cur=bfs.front();
+            bfs.pop();
+            for(vector<int>::iterator it=v[cur].adjacent.begin(); it!=v[cur].adjacent.end(); ++it)
+            {
+                if(v[*it].c==0)
+                {
+                    v[*it].c=1;
+                    v[*it].d=v[cur].d+1;
+                    v[*it].p=cur;
+                    bfs.push(*it);
+                }
+            }
+            v[cur].c=2;
+        }
+    }
+    void printpath(int x,int y)
+    {
+        if(x==y)
+            printf("%d ",x);
+        else
+        {
+            printpath(x,v[y].p);
+            printf("%d ",y);
+        }
+    }
+   void  addedge(int x,int y)
+    {
+        v[x].adjacent.push_back(y);
+        adj[x][y]=1;
+        edgecnt++;
+        addtovset(x);
+        addtovset(y);
+    }
+    int findinvset(int x)
+    {
+
+        for(vector<int>::iterator it=vset.begin(); it!=vset.end(); ++it)
+            if(*it==x)
+                return 1;
+        return 0;
+    }
+    void addtovset(int x)
+    {
+        if(!findinvset(x))
+        {
+
+            vset.push_back(x);
+            vcnt++;
+        }
+    }
+    void addbiedge(int x,int y)
+    {
+        v[x].adjacent.push_back(y);
+        adj[x][y]=1;
+        v[y].adjacent.push_back(x);
+        adj[y][x]=1;
+        addtovset(x);
+        addtovset(y);
+        edgecnt+=2;
+    }
+
+};
+main()
+{
+    while(true)
+    {
+        int t;
+        scanf("%d",&t);
+        if(t==0)
+            break;
+         graph g;
+        int i, edge;
+        scanf("%d",&edge);
+        for(i=0;i<edge;i++){
+            int x,y;
+            scanf("%d %d",&x,&y);
+            g.addbiedge(x,y);
+        }
+        if(g.isbipartite())
+                printf("BICOLORABLE.\n");
+            else
+                printf("NOT BICOLORABLE.\n");
+    }
+
+
+
+}

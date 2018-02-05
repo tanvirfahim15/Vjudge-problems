@@ -1,0 +1,106 @@
+#include<cstdio>
+#include<iostream>
+#include<algorithm>
+#include<vector>
+#include<queue>
+#include<stack>
+#include<string>
+#include<cmath>
+#include<map>
+using namespace std;
+#define sz 1001
+#define loop(n) for(int i=0;i<n;i++)
+void dfsvisit(int n);
+vector<int>graph[sz];
+map <string,int> getid;
+vector<string>strlist;
+vector<int>ans;
+int d[sz],c[sz],f[sz],in[sz];
+stack<int>order;
+int node=0;
+void gnew(){
+    for(int i=0;i<sz;i++)
+        graph[i].clear();
+    strlist.clear();
+    getid.clear();
+}
+void gflush()
+{
+    for(int i=0; i<sz; i++)
+    {
+        d[i]=-1;
+        f[i]=-1;
+        c[i]=0;
+        in[i]=0;
+    }
+    while(!order.empty())
+    {
+        order.pop();
+    }
+}
+
+int main()
+{
+
+    //freopen ("input.txt","r",stdin);
+    int test=0;
+    int n;
+    while(cin>>n)
+    {
+		gnew();
+		node=n;
+
+        gflush();
+        for(int i=0; i<n; i++)
+        {
+            string str;
+            cin>>str;
+            strlist.push_back(str);
+            getid[str]=i;
+        }
+        int m;
+        cin>>m;
+        for(int i=0; i<m; i++)
+        {
+            string s1,s2;
+            cin>>s1>>s2;
+            graph[getid[s1]].push_back(getid[s2]);
+            in[getid[s2]]++;
+        }
+        while(node){
+			int cur;
+			for(int i=0;i<n;i++){
+				if(c[i]==0&&in[i]==0)
+					{
+					cur=i;
+					break;
+					}
+			}
+			for(int i=0;i<graph[cur].size();i++){
+
+				in[graph[cur][i]]--;
+			}
+			c[cur]=1;
+			order.push(cur);
+
+			node--;
+        }
+        test++;
+        cout<<"Case #"<<test<<": Dilbert should drink beverages in this order:";
+        while(!order.empty())
+        {
+           // cout<<" "<<strlist[order.top()];
+            ans.push_back(order.top());
+            order.pop();
+        }
+        reverse(ans.begin(),ans.end());
+        loop(ans.size()){
+         cout<<" "<<strlist[ans[i]];
+        }
+        ans.clear();
+        cout<<".\n\n";
+
+    }
+
+    return 0;
+}

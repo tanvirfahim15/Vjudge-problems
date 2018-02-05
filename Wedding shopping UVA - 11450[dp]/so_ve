@@ -1,0 +1,96 @@
+#include<cstdio>
+#include<iostream>
+#include<algorithm>
+#include<vector>
+#include<queue>
+#include<stack>
+#include<string>
+#include<cmath>
+#include<map>
+#include <utility>
+#include <iomanip>
+using namespace std;
+#define pii pair<int,int>
+#define mp make_pair
+#define pb push_back
+#define sz 205
+#define intmax 2147483647
+#define loop(n) for(int i=0;i<n;i++)
+#define loopj(n) for(int j=0;j<n;j++)
+typedef long long LL;
+typedef unsigned long long ULL;
+//cout << fixed;
+//cout << setprecision(2);
+//priority_queue<node, vector<node>, greater<node> > q;
+/*
+struct point{
+    int x,y;
+    point(int _x,int _y){
+        x=_x;
+        y=_y;
+    }
+};
+struct Xgreater
+{
+    bool operator()( const point& lx, const point& rx ) const {
+        return lx.x < rx.x;
+    }
+};
+
+    priority_queue<point,vector<point> , Xgreater> pq;
+*/
+int main()
+{
+    //freopen ("input.txt","r",stdin);
+    int cases;
+    cin>>cases;
+    while(cases--)
+    {
+
+        int m,c;
+        cin>>m>>c;
+        int dp[21][201];
+        loop(21)
+        {
+            loopj(201)
+            {
+                dp[i][j]=-1;
+            }
+        }
+        dp[0][0]=0;
+        int k;
+        for(k=1; k<=c; k++)
+        {
+            int x;
+            cin>>x;
+            loop(x)
+            {
+                int v;
+                cin>>v;
+                for(int j=v; j<201; j++)
+                {
+                    if(dp[k-1][j-v]!=-1)
+                        dp[k][j]=v+dp[k-1][j-v];
+                }
+            }
+        }
+        int ans=-1;
+        for(int i=m; i>=0; i--)
+        {
+            if(dp[k-1][i]!=-1)
+            {
+                ans=dp[k-1][i];
+                break;
+            }
+        }
+        if(ans==-1)
+            cout<<"no solution"<<endl;
+        else
+            cout<<ans<<endl;
+
+    }
+
+
+
+    return 0;
+}

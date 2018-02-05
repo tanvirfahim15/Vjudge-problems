@@ -1,0 +1,84 @@
+#include<cstdio>
+#include<iostream>
+#include<algorithm>
+#include<vector>
+#include<queue>
+#include<stack>
+#include<string>
+#include<cmath>
+#include<map>
+#include <utility>
+#include <iomanip>
+using namespace std;
+#define pii pair<int,int>
+#define mp make_pair
+#define pb push_back
+#define sz 10005
+#define intmax 2147483647
+#define loop(n) for(int i=0;i<n;i++)
+#define loopj(n) for(int j=0;j<n;j++)
+typedef long long LL;
+typedef unsigned long long ULL;
+//cout << fixed;
+//cout << setprecision(2);
+//priority_queue<node, vector<node>, greater<node> > q;
+/*
+struct point{
+    int x,y;
+    point(int _x,int _y){
+        x=_x;
+        y=_y;
+    }
+};
+struct Xgreater
+{
+    bool operator()( const point& lx, const point& rx ) const {
+        return lx.x < rx.x;
+    }
+};
+
+    priority_queue<point,vector<point> , Xgreater> pq;
+*/
+int a[10001],dp[105][10001],mod ;
+
+int func (int sum, int pos)
+{
+    sum=((sum%mod)+mod)%mod ;
+    if (pos==0)
+    {
+        if (sum==0)
+            return 1;
+        return 0 ;
+    }
+
+    if ( dp[sum][pos] != -1)
+        return dp[sum][pos] ;
+    dp[sum][pos]=func(sum+a[pos],pos-1)|func(sum-a[pos],pos-1);
+    return dp[sum][pos];
+}
+
+int main ()
+{
+    int t;
+    cin>>t ;
+    while (t--)
+    {
+        loop(105)
+        {
+            loopj(10001)
+            {
+                dp[i][j]=-1;
+            }
+        }
+        int n;
+        cin>>n>>mod;
+        for (int i=1; i<=n ; i++)
+            cin>>a[i] ;
+        if (func(0,n))
+            cout<<"Divisible"<<endl ;
+        else
+            cout<<"Not divisible"<<endl ;
+    }
+
+    return 0 ;
+}

@@ -1,0 +1,107 @@
+#include<cstdio>
+#include<iostream>
+#include<algorithm>
+#include<vector>
+#include<queue>
+#include<stack>
+#include<string>
+#include<cmath>
+#include<map>
+using namespace std;
+#define sz 1000001
+#define loop(n) for(int i=0;i<n;i++)
+#define loop1(n) for(int i=1;i<=n;i++)
+vector<int>graph[sz],rgraph[sz];
+int c[sz],d[sz],f[sz];
+int tim=0;
+stack<int>order;
+vector<int>sccorder;
+void gflush()
+{
+    loop(sz)
+    {
+        c[i]=0;
+        d[i]=-1;
+        f[i]=-1;
+    }
+    tim=0;
+}
+void gnew()
+{
+    gflush();
+    loop(sz)
+    {
+        graph[i].clear();
+        rgraph[i].clear();
+    }
+    while(!order.empty())
+        order.pop();
+    sccorder.clear();
+}
+void dfsvisit(int n)
+{
+    tim++;
+    d[n]=tim;
+    c[n]=1;
+    loop(graph[n].size())
+    {
+        if(c[graph[n][i]]==0)
+            dfsvisit(graph[n][i]);
+    }
+    tim++;
+    f[n]=tim;
+    c[n]=2;
+    order.push(n);
+}
+void dfs(int n)
+{
+
+    gflush();
+    loop1(n)
+    {
+        if(c[i]==0)
+            dfsvisit(i);
+    }
+    while(!order.empty())
+    {
+        sccorder.push_back(order.top());
+        order.pop();
+    }
+}
+int countcomp()
+{
+    int ans=0;
+    gflush();
+    loop(sccorder.size())
+    {
+        if(c[sccorder[i]]==0)
+        {
+            ans++;
+            dfsvisit(sccorder[i]);
+        }
+    }
+    return ans;
+}
+int main()
+{
+
+    //freopen ("input.txt","r",stdin);
+    int t;
+    cin>>t;
+    loop(t)
+    {
+        gnew();
+        int n,m;
+        cin>>n>>m;
+        loop(m)
+        {
+            int x,y;
+            cin>>x>>y;
+            graph[x].push_back(y);
+        }
+        dfs(n);
+        cout<<countcomp()<<'\n';
+    }
+
+    return 0;
+}

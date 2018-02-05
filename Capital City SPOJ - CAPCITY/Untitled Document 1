@@ -1,0 +1,128 @@
+#include<cstdio>
+#include<iostream>
+#include<algorithm>
+#include<vector>
+#include<queue>
+#include<stack>
+#include<string>
+#include<cmath>
+#include<map>
+#include <utility>
+using namespace std;
+#define sz 1000001
+#define intmax 2147483647
+#define loop(n) for(int i=0;i<n;i++)
+#define loopj(n) for(int j=0;j<n;j++)
+//priority_queue<int, std::vector<int>, decltype(&compare)> pq(&compare);
+
+vector<int>graph[sz],rgraph[sz],compgraph[sz],comp[sz],sccorder;
+int c[sz],d[sz],f[sz],com[sz];
+stack<int> order,comporder;
+int tim=0,compind=0;
+void gflush(){
+    loop(sz){
+        c[i]=0;
+        d[i]=-1;
+        f[i]=-1;
+        com[i]=-1;
+    }
+    tim=0;
+}
+void dfs(int n){
+    tim++;
+    d[n]=tim;
+    c[n]=1;
+    loop(graph[n].size()){
+        if(c[graph[n][i]]==0){
+            dfs(graph[n][i]);
+        }
+    }
+    tim++;
+    f[n]=tim;
+    c[n]=2;
+    order.push(n);
+}
+void cdfs(int n){
+    tim++;
+    d[n]=tim;
+    c[n]=1;
+    loop(compgraph[n].size()){
+        if(c[compgraph[n][i]]==0){
+            cdfs(compgraph[n][i]);
+        }
+    }
+    tim++;
+    f[n]=tim;
+    c[n]=2;
+    comporder.push(n);
+}
+void scc(int n){
+    tim++;
+    d[n]=tim;
+    c[n]=1;
+    com[n]=compind;
+    comp[compind].push_back(n);
+    loop(rgraph[n].size()){
+        if(c[rgraph[n][i]]==0){
+            scc(rgraph[n][i]);
+        }
+        else if(c[rgraph[n][i]]==2){
+            compgraph[com[n]].push_back(com[rgraph[n][i]]);
+        }
+    }
+    tim++;
+    f[n]=tim;
+    c[n]=2;
+}
+int main()
+{
+
+    //freopen ("input.txt","r",stdin);
+    int n,m;
+    cin>>n>>m;
+    loop(m){
+        int x,y;
+        cin>>x>>y;
+        x--;y--;
+        graph[x].push_back(y);
+        rgraph[y].push_back(x);
+    }
+    gflush();
+    loop(n){
+        if(c[i]==0){
+            dfs(i);
+        }
+    }
+    gflush();
+    while(!order.empty()){
+        sccorder.push_back(order.top());
+        order.pop();
+    }
+    loop(sccorder.size()){
+        if(c[sccorder[i]]==0){
+            scc(sccorder[i]);
+            compind++;
+        }
+    }
+
+    gflush();
+    loop(compind){
+        if(c[i]==0){
+            cdfs(i);
+        }
+    }
+    cout<<comp[comporder.top()].size()<<endl;
+    sort(comp[comporder.top()].begin(),comp[comporder.top()].end());
+    int x=0;
+    loop(comp[comporder.top()].size()){
+        if(x)
+        cout<<" "<<comp[comporder.top()][i]+1;
+        else{
+
+        cout<<comp[comporder.top()][i]+1;
+        x++;
+        }
+    }
+    cout<<endl;
+    return 0;
+}

@@ -1,0 +1,212 @@
+#include <bits/stdc++.h>
+using namespace std;
+struct vertex
+{
+    int c=0;
+    int d=-1;
+    int p=-1;
+    int dc=0;
+    int dp=-1;
+    int start=-1;
+    int stop=-1;
+    vector<int> adjacent;
+};
+
+struct graph
+{
+    int w[100];
+    vertex v[201];
+    vector<int> vset;
+    stack<int> topsort;
+    int adj[201][201];
+
+    int time=0;
+    int hascycle=0;
+    int compdir=0;
+    int edgecnt=0;
+    int vcnt=0;
+    graph()
+    {
+        int i,j;
+        for(i=0; i<201; i++)
+            for(j=0; j<201; j++)
+                adj[i][j]=0;
+    }
+    int isbipartite()
+    {
+        int i;
+        for(i=0; i<100; i++)
+        {
+            v[i].c=0;
+            v[i].p=-1;
+            v[i].d=-1;
+        }
+        int x=1;
+        for(i=0; i<100; i++)
+        {
+
+            if(v[i].c==0)
+                x*=checkbipartite(i);
+        }
+        return x;
+    }
+    int checkbipartite(int source)
+    {
+        v[source].c=1;
+        queue<int> bfs;
+        bfs.push(source);
+        while(!bfs.empty())
+        {
+            int cur=bfs.front();
+            bfs.pop();
+            for(vector<int>::iterator it=v[cur].adjacent.begin(); it!=v[cur].adjacent.end(); ++it)
+            {
+                if(v[*it].c==0)
+                {
+                    v[*it].c=3-v[cur].c;
+                    bfs.push(*it);
+                }
+                else if(v[*it].c==v[cur].c)
+                    return 0;
+            }
+        }
+        return 1;
+    }
+     int adobfs(int source)
+    {
+        int i;
+        queue<int> bfs;
+        bfs.push(source);
+        int ww=0;
+        int max;
+        while(!bfs.empty())
+        {
+
+            int cur=bfs.front();
+            bfs.pop();
+            if(v[cur].adjacent.empty()){
+             return cur;
+            }
+            max=0;
+            int ind;
+            for(vector<int>::iterator it=v[cur].adjacent.begin(); it!=v[cur].adjacent.end(); ++it)
+            {
+
+                    if(w[*it]>max){
+
+                        max=w[*it];
+                        ind=*it;
+
+                    }
+
+            }
+            bfs.push(ind);
+            ww+=max;
+        }
+    }
+    int dobfs(int source)
+    {
+        int i;
+        queue<int> bfs;
+        bfs.push(source);
+        int ww=0;
+        int max;
+        while(!bfs.empty())
+        {
+
+            int cur=bfs.front();
+            bfs.pop();
+            if(v[cur].adjacent.empty()){
+                break;
+            }
+            max=0;
+            int ind;
+            for(vector<int>::iterator it=v[cur].adjacent.begin(); it!=v[cur].adjacent.end(); ++it)
+            {
+
+                    if(w[*it]>max){
+
+                        max=w[*it];
+                        ind=*it;
+
+                    }
+
+            }
+            bfs.push(ind);
+            ww+=max;
+        }
+        return ww;
+    }
+    void printpath(int x,int y)
+    {
+        if(x==y)
+            printf("%d ",x);
+        else
+        {
+            printpath(x,v[y].p);
+            printf("%d ",y);
+        }
+    }
+    void  addedge(int x,int y)
+    {
+        v[x].adjacent.push_back(y);
+        adj[x][y]=1;
+        edgecnt++;
+        addtovset(x);
+        addtovset(y);
+    }
+    int findinvset(int x)
+    {
+
+        for(vector<int>::iterator it=vset.begin(); it!=vset.end(); ++it)
+            if(*it==x)
+                return 1;
+        return 0;
+    }
+    void addtovset(int x)
+    {
+        if(!findinvset(x))
+        {
+
+            vset.push_back(x);
+            vcnt++;
+        }
+    }
+    void addbiedge(int x,int y)
+    {
+        v[x].adjacent.push_back(y);
+        adj[x][y]=1;
+        v[y].adjacent.push_back(x);
+        adj[y][x]=1;
+        addtovset(x);
+        addtovset(y);
+        edgecnt+=2;
+    }
+    int getmaxdist(int s){
+
+
+    }
+
+};
+main()
+{
+    int t,test;
+    scanf("%d",&test);
+    for(t=0;t<test;t++){
+        graph g;
+    int i,n,m;
+    scanf("%d %d",&n,&m);
+    for(i=0; i<n; i++)
+        scanf("%d",&g.w[i]);
+    for(i=0; i<m; i++)
+    {
+        int x,y;
+        scanf("%d %d",&x,&y);
+        g.addedge(x,y);
+    }
+    printf("Case %d: %d %d\n",t+1,g.dobfs(0),g.adobfs(0));
+
+    }
+
+
+}
